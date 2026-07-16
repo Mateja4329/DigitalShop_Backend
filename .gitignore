@@ -1,0 +1,17 @@
+## Visual Studio
+.vs/
+[Oo]bj/
+[Bb]in/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## SQLite Data Base
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+## Everything else
+*.tmp
