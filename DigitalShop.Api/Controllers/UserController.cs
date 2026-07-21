@@ -1,9 +1,9 @@
 ﻿using BCrypt.Net;
-using DigitalShop.DTOs.User;
-using DigitalShop.Helpers;
-using DigitalShop.Mappings;
-using DigitalShop.Repo.Services;
-using DigitalShop.Validators;
+using DigitalShop.Application.DTOs.User;
+using DigitalShop.Application.Helpers;
+using DigitalShop.Application.Mappings;
+using DigitalShop.Infrastructure.Repo.Interface;
+using DigitalShop.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

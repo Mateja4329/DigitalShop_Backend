@@ -1,9 +1,9 @@
-﻿using DigitalShop.DTOs.Cart;
-using DigitalShop.DTOs.CartDTO;
-using DigitalShop.DTOs.User;
-using DigitalShop.Entities;
-using DigitalShop.Mappings;
-using DigitalShop.Repo.Services;
+﻿using DigitalShop.Application.DTOs.Cart;
+using DigitalShop.Application.DTOs.CartDTO;
+using DigitalShop.Application.DTOs.User;
+using DigitalShop.Infrastructure.Entities;
+using DigitalShop.Application.Mappings;
+using DigitalShop.Infrastructure.Repo.Interface;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

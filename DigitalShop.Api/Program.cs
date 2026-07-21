@@ -1,6 +1,6 @@
-using DigitalShop.Helpers;
-using DigitalShop.Repo;
-using DigitalShop.Repo.Services;
+using DigitalShop.Application.Helpers;
+using DigitalShop.Infrastructure.Repo;
+using DigitalShop.Infrastructure.Repo.Interface;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace DigitalShop
+namespace DigitalShop.Api
 {
     public class Program
     {
@@ -83,7 +83,7 @@ namespace DigitalShop
 
             // Registers Entity Framework Core and configures DataContext to use SQLite.
             // It reads the database location from the "DefaultConnection" string in appsettings.json.
-            builder.Services.AddDbContext<Data.DataContext>(options =>
+            builder.Services.AddDbContext<Infrastructure.Data.DataContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // ==========================================

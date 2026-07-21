@@ -1,17 +1,10 @@
-﻿using DigitalShop.Data;
-using DigitalShop.DTOs.CartDTO;
-using DigitalShop.DTOs.Product;
-using DigitalShop.DTOs.ProductDTO;
-using DigitalShop.DTOs.User;
-using DigitalShop.Entities;
-using DigitalShop.Helpers;
-using DigitalShop.Mappings;
-using DigitalShop.Repo.Services;
+﻿using DigitalShop.Application.DTOs.Product;
+using DigitalShop.Application.DTOs.ProductDTO;
+using DigitalShop.Application.Helpers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using DigitalShop.Application.Services.Interface;
 
 namespace DigitalShop.Controllers
 {
@@ -20,16 +13,16 @@ namespace DigitalShop.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
-        public ProductController(IProductRepository context)
+        private readonly IProductService _productService;
+        public ProductController(IProductService productService)
         {
-            _productRepository = context;
+            _productService = productService;
         }
 
         // ==================== POST ====================
         // Here we add a new product to the database and return the list of all products
         // Postman command: POST http://localhost:7255/api/product
-        [HttpPost]
+        [HttpPost("AddProduct")]
         public async Task<ActionResult<List<ProductResponseDTO>>> AddProduct(ProductCreateDTO createDTO, [FromServices] IValidator<ProductCreateDTO> validator)
         {
             var validationResult = await validator.ValidateAsync(createDTO);
@@ -39,20 +32,20 @@ namespace DigitalShop.Controllers
             }
 
             // mapping input (DTO -> DataBase)
-            var newProduct = createDTO.ToProductEntity();
+            // var newProduct = createDTO.ToProductEntity();
 
             // Save
-            var savedProduct = await _productRepository.AddProductAsync(newProduct);
+            var savedProduct = await _productService.AddProductApp(createDTO);
 
             // Map the output (DataBase -> DTO)
-            return CreatedAtAction(nameof(AddProduct), new { id = savedProduct.ProductId }, savedProduct.ToProductResponseDto());
+            return CreatedAtAction(nameof(AddProduct), new { id = savedProduct.ProductId }, savedProduct);
         }
 
         // ==================== GET ====================
         // Here we get all products from the database and return them
         // Postman command: GET http://localhost:7255/api/product
-        [HttpGet]
-        public async Task<ActionResult<List<ProductResponseDTO>>> GetAllProducts([FromQuery] ProductQueryParameter queryParams, [FromServices] IValidator<ProductQueryParameter> validator)
+        [HttpGet("GetAllProducts")]
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameter queryParams, [FromServices] IValidator<ProductQueryParameter> validator)
         {
             var validationResult = await validator.ValidateAsync(queryParams);
             if (!validationResult.IsValid)
@@ -60,70 +53,61 @@ namespace DigitalShop.Controllers
                 return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
             }
 
-            var paginatedProducts = await _productRepository.GetAllProductsAsync(queryParams);
-            var dtoList = paginatedProducts.Items.ToProductResponseDtoList();
-            var paginatedDto = new PaginatedList<ProductResponseDTO>(dtoList, paginatedProducts.TotalCount, paginatedProducts.PageIndex, queryParams.PageSize);
-            return Ok(new ApiResponse(true, "Products retrieved successfully", paginatedDto));
+            var paginatedProducts = await _productService.GetAllProductsApp(queryParams);
+            
+            return Ok(new ApiResponse(true, "Products retrieved successfully", paginatedProducts));
         }
 
         // Here we get a product by id from the database and return it
         // Postman command: GET http://localhost:7255/api/product/1
-        [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ProductResponseDTO>> GetProduct(Guid id)
+        [HttpGet("{id:guid}/GetProductById")]
+        public async Task<ActionResult<ProductResponseDTO>> GetProductById(Guid id)
         {
-            var product = await _productRepository.GetProductByIdAsync(id);
+            var product = await _productService.GetProductByIdApp(id);
             if (product == null)
             {
                 return NotFound("Product not found");
             }
-            return Ok(product.ToProductResponseDto());
+            return Ok(product);
         }
 
         // ==================== PUT ====================
         // Here we update a product by id in the database and return the list of all products
         // Postman command: PUT http://localhost:7255/api/product/1
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id:guid}/UpdateProduct")]
         public async Task<ActionResult<ProductCreateDTO>> UpdateProduct(Guid id, ProductCreateDTO request)
         {
-            var product = await _productRepository.GetProductByIdAsync(id);
-            if(product == null)
+            var product = await _productService.UpdateApp(id, request);
+            if (product == null)
             {
                 return NotFound("Product not found");
             }
-
-            product.ProductName = request.ProductName;
-            product.ProductDescription = request.ProductDescription;
-            product.ProductCategory = request.ProductCategory;
-            product.ProductCondition = request.ProductCondition;
-            product.Price = request.Price;
-
-            var savedProduct = await _productRepository.UpdateAsync(product);
             
-            return Ok(savedProduct.ToProductResponseDto());
+            return Ok(product);
         }
 
         // ==================== DELETE ====================
         // Here we delete all products from the database and return the list of all products
         // Postman command: DELETE http://localhost:7255/api/product
-        [HttpDelete]
-        public async Task<ActionResult<List<ProductResponseDTO>>> DeleteAllProduct()
+        [HttpDelete("DeleteAllProducts")]
+        public async Task<ActionResult<List<ProductResponseDTO>>> DeleteAllProducts()
         {
-            var remainingProducts = await _productRepository.DeleteAllProductsAsync();
-            return Ok(remainingProducts.ToProductResponseDtoList());
+            var remainingProducts = await _productService.DeleteAllProductsApp();
+            return Ok(remainingProducts);
         }
 
         // Here we delete a product by id from the database and return the list of all products
         // Postman command: DELETE http://localhost:7255/api/product/1
-        [HttpDelete("{id:guid}")]
-        public async Task<ActionResult<ProductResponseDTO>> DeleteProduct(Guid id)
+        [HttpDelete("{id:guid}/DeleteOneProduct")]
+        public async Task<ActionResult<ProductResponseDTO>> DeleteProductById(Guid id)
         {
-            var product = await _productRepository.DeleteProductByIdAsync(id);
+            var product = await _productService.DeleteProductByIdApp(id);
             if (product == null)
             {
                 return NotFound("Product not found");
             }
 
-            return Ok(product.ToProductResponseDto());
+            return Ok(product);
         }
     }
 }
