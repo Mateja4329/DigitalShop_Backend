@@ -13,7 +13,7 @@ namespace DigitalShop.Application.Services.Interface
     public interface IProductService
     {
         Task<ProductResponseDTO> AddProductApp(ProductCreateDTO createDTO);
-        Task<PaginatedList<ProductResponseDTO?>> GetAllProductsApp(ProductQueryParameter queryParams);
+        Task<PaginatedList<ProductResponseDTO>> GetAllProductsApp(ProductQueryParameter queryParams);
         Task<ProductResponseDTO?> GetProductByIdApp(Guid productId);
         Task<ProductResponseDTO?> UpdateApp(Guid productId, ProductCreateDTO request);
         Task<List<ProductResponseDTO>> DeleteAllProductsApp();

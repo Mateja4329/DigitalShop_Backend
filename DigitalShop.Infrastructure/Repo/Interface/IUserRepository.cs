@@ -1,7 +1,5 @@
-﻿using DigitalShop.Application.DTOs.User;
-using DigitalShop.Infrastructure.Entities;
-using DigitalShop.Application.Helpers;
-using Microsoft.AspNetCore.Mvc;
+﻿using DigitalShop.Infrastructure.Entities;
+using DigitalShop.Infrastructure.Entities.dbFilter;
 
 namespace DigitalShop.Infrastructure.Repo.Interface
 {
@@ -9,6 +7,6 @@ namespace DigitalShop.Infrastructure.Repo.Interface
     {
         Task<User> AddUserAsync(User user);
         Task<User?> GetUserByEmailAsync(string userEmail);
-        Task<PaginatedList<User>> GetAllUsersAsync(UserQueryParameters queryParms);
+        Task<(List<User> User, int TotalCount)> GetAllUsersAsync(UserFilterOptions queryParams);
     }
 }

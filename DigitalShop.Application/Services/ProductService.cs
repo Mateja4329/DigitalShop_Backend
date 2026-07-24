@@ -25,7 +25,7 @@ namespace DigitalShop.Application.Services
         }
 
         // GET ------------------------------------------------------------------------
-        public async Task<PaginatedList<ProductResponseDTO?>> GetAllProductsApp(ProductQueryParameter queryParams)
+        public async Task<PaginatedList<ProductResponseDTO>> GetAllProductsApp(ProductQueryParameter queryParams)
         {
             ProductFilterOptions ok = new ProductFilterOptions()
             {
@@ -35,16 +35,13 @@ namespace DigitalShop.Application.Services
                 ProductCategory = queryParams.ProductCategory,
                 ProductCondition = queryParams.ProductCondition
             };
-            var paginatedRequest = await _repository.GetAllProductsAsync(ok);
+            var (products, totalCount) = await _repository.GetAllProductsAsync(ok);
 
-            var dtoList = paginatedRequest.Products
-                .ToProductResponseDtoList()
-                .Cast<ProductResponseDTO?>()
-                .ToList();
+            var dtoList = products.ToProductResponseDtoList();
 
-            var paginatedDto = new PaginatedList<ProductResponseDTO?>(
+            var paginatedDto = new PaginatedList<ProductResponseDTO>(
                 dtoList,
-                paginatedRequest.TotalCount,
+                totalCount,
                 queryParams.PageIndex,
                 queryParams.PageSize
             );

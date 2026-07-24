@@ -2,15 +2,9 @@
 using DigitalShop.Application.DTOs.User;
 using DigitalShop.Application.Helpers;
 using DigitalShop.Application.Mappings;
-using DigitalShop.Infrastructure.Repo.Interface;
-using DigitalShop.Application.Validators;
+using DigitalShop.Application.Services.Interface;
 using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
 using BC = BCrypt.Net.BCrypt;
 
 // ------------ Difference between Encryption and Hashing ------------
@@ -33,13 +27,11 @@ namespace DigitalShop.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly AuthHelpers _helpService;
+        private readonly IUserService _userService;
 
-        public UserController(IUserRepository userRepository, AuthHelpers helpService)
+        public UserController(IUserService userService)
         {
-            _userRepository = userRepository;
-            _helpService = helpService;
+            _userService = userService;
         }
 
         // ==================== POST ====================
@@ -54,28 +46,21 @@ namespace DigitalShop.Controllers
                 return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
             }
 
-            // Then check if user already exists
-            var existingUser = await _userRepository.GetUserByEmailAsync(userCreateDTO.Email);
-            if (existingUser != null)
+            // Then check if token already exists
+            var newUser = await _userService.RegisterUserApp(userCreateDTO);
+            if (newUser == null)
             {
                 return BadRequest(new { message = "User with this email already exists" });
             }
 
-            // At the end we hash the password with BCrypt
-            var passwordHash = BC.EnhancedHashPassword(userCreateDTO.Password, hashType: HashType.SHA512);
-            var newUser = userCreateDTO.ToUserEntity(passwordHash);
-
-            await _userRepository.AddUserAsync(newUser);
-
-            var responseDto = newUser.ToUserResponseDto();
-            var apiResponse = new ApiResponse(true, "User successfully registered", responseDto);
+            var apiResponse = new ApiResponse(true, "User successfully registered", newUser);
 
             return CreatedAtAction(nameof(RegisterUser), new { id = newUser.UserId }, apiResponse);
         }
 
         // ------------------ LOGIN ------------------
         [HttpPost("LogIn")]
-        public async Task<ActionResult<UserResponseDTO>> LogInUser(UserLoginDTO userLoginDTO, [FromServices] IValidator<UserLoginDTO> validator)
+        public async Task<IActionResult> LogInUser(UserLoginDTO userLoginDTO, [FromServices] IValidator<UserLoginDTO> validator)
         {
             // Validate
             var validationResult = await validator.ValidateAsync(userLoginDTO);
@@ -84,21 +69,12 @@ namespace DigitalShop.Controllers
                 return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
             }
 
-            // Now retrieve user by email
-            var user = await _userRepository.GetUserByEmailAsync(userLoginDTO.Email);
-            if (user == null)
+            // Now retrieve token by email
+            var token = await _userService.LogInUserApp(userLoginDTO);
+            if (token == null)
             {
                 return Unauthorized(new { message = "Invalid email or password" });
             }
-
-            // Then verify password
-            var isPasswordValid = BC.EnhancedVerify(userLoginDTO.Password, user.Password, hashType: HashType.SHA512);
-            if (!isPasswordValid)
-            {
-                return Unauthorized(new { message = "Invalid email or password" });
-            }
-
-            var token = _helpService.GenerateJWTToken(user);
 
             return Ok(new { token = token });
         }
@@ -113,9 +89,8 @@ namespace DigitalShop.Controllers
                 return ValidationProblem(new ValidationProblemDetails(validationResult.ToDictionary()));
             }
 
-            var paginatedUsers = await _userRepository.GetAllUsersAsync(queryParams);
-            var dtoList = paginatedUsers.Items.ToUserResponseDtolist();
-            var paginatedDto = new PaginatedList<UserResponseDTO>(dtoList, paginatedUsers.TotalCount, paginatedUsers.PageIndex, queryParams.PageSize);
+            var paginatedDto = await _userService.GetAllUsersApp(queryParams);
+            
             return Ok(new ApiResponse(true, "Users retrieved successfully", paginatedDto));
         }
     }

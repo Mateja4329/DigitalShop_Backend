@@ -1,5 +1,6 @@
 ﻿using DigitalShop.Application.DTOs.CartDTO;
 using DigitalShop.Application.Mappings;
+using DigitalShop.Application.Services.Interface;
 using DigitalShop.Infrastructure.Repo.Interface;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DigitalShop.Application.Services
 {
-    public class CartService
+    public class CartService : ICartService
     {
         private readonly ICartRepository _repository;
 

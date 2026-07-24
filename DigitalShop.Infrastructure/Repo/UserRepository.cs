@@ -1,11 +1,8 @@
 ﻿using DigitalShop.Infrastructure.Data;
-using DigitalShop.Application.DTOs.User;
 using DigitalShop.Infrastructure.Entities;
-using DigitalShop.Application.Helpers;
+using DigitalShop.Infrastructure.Entities.dbFilter;
 using DigitalShop.Infrastructure.Repo.Interface;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Numerics;
 
 namespace DigitalShop.Infrastructure.Repo
 {
@@ -34,7 +31,7 @@ namespace DigitalShop.Infrastructure.Repo
         }
 
         // GET ================================================
-        public async Task<PaginatedList<User>> GetAllUsersAsync(UserQueryParameters queryParams)
+        public async Task<(List<User> User, int TotalCount)> GetAllUsersAsync(UserFilterOptions queryParams)
         {
             // First we need to initialize the query as IQueryable (no db exe yet)
             var query = dataContext.Users.AsNoTracking().AsQueryable();
@@ -60,7 +57,7 @@ namespace DigitalShop.Infrastructure.Repo
 
             var count = await query.CountAsync(); // Just count how many total users you have, don't extract data
 
-            return new PaginatedList<User>(users, count, queryParams.PageIndex, queryParams.PageSize);
+            return (users, count);
         }
     }
 }
