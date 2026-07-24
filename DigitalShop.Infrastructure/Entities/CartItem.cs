@@ -1,5 +1,4 @@
-﻿using DigitalShop.Application.DTOs;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DigitalShop.Infrastructure.Entities
 {

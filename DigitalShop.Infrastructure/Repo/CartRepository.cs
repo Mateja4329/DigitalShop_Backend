@@ -1,5 +1,4 @@
 ﻿using DigitalShop.Infrastructure.Data;
-using DigitalShop.Application.DTOs.CartDTO;
 using DigitalShop.Infrastructure.Entities;
 using DigitalShop.Infrastructure.Repo.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +39,7 @@ namespace DigitalShop.Infrastructure.Repo
 
         // GET ===================================
         // ALL -----------------------------------
-        public async Task<IEnumerable<CartItem>> GetAllCartAsync(Guid userId)
+        public async Task<IEnumerable<CartItem>> GetAllCartsAsync(Guid userId)
         {
             return await dataContext.CartItems
                 .Include(p => p.Product)
@@ -49,59 +48,62 @@ namespace DigitalShop.Infrastructure.Repo
                 .ToListAsync();
         }
         // ONE -----------------------------------
-        public async Task<CartItem?> GetCartByIdAsycn(Guid userId, Guid productId)
+        public async Task<CartItem?> GetCartByIdAsycn(Guid cartId)
         {
             return await dataContext.CartItems
                 .Include(p => p.Product)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(p => p.UserId == userId && p.ProductId == productId);
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
         }
 
         // PUT ===================================
-        public async Task<CartItem?> UpdateCartAsync(Guid userId, Guid oldProductId, CartCreateDTO request)
+        public async Task<CartItem?> UpdateCartAsync(Guid cartId, Guid newProductId, decimal newQuantity)
         {
-            // Exception: If the user wants to update the original product
-            if (oldProductId == request.ProductId)
-            {
-                var cart = await dataContext.CartItems.FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == oldProductId);
-
-                if (cart == null) return null;
-
-                cart.Quantity = request.Quantity;
-                await dataContext.SaveChangesAsync();
-                return await dataContext.CartItems
-                .Include(p => p.Product)
+            // First we find the exact cart using CartId. This is an exception
+            var existingCart = await dataContext.CartItems
                 .Include(u => u.User)
-                .FirstAsync(p => p.CartItemId == cart.CartItemId);
-            }
-            // We check if the old product that we want to update exists
-            var oldCartItem = await dataContext.CartItems.FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == oldProductId);
-            if (oldCartItem == null) return null;
+                .Include(p => p.Product)
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
 
-            oldCartItem.Quantity -= request.Quantity;
-            if(oldCartItem.Quantity <= 0) dataContext.CartItems.Remove(oldCartItem);
-            // Then we check if the product we want to update to exists in the users cart
-            var newCartItem = await dataContext.CartItems.FirstOrDefaultAsync(c => c.UserId == userId && c.ProductId == request.ProductId);
+            if (existingCart == null) return null;
 
-            if (newCartItem != null)
+            // SCENARIO A: User wants to change the the quantity of the same product
+            if (existingCart.ProductId == newProductId)
             {
-                newCartItem.Quantity += request.Quantity;
+                existingCart.Quantity = newQuantity;
+                await dataContext.SaveChangesAsync();
+                return existingCart;
+            }
+
+            // SCENARIO B: User wants to switch the goods with something else
+            // We have to check if the user already has that cart
+            var productAlreadyInCart = await dataContext.CartItems
+                .FirstOrDefaultAsync(c => c.UserId == existingCart.UserId && c.ProductId == newProductId);
+
+            if (productAlreadyInCart != null)
+            {
+                productAlreadyInCart.Quantity += newQuantity;
+                dataContext.CartItems.Remove(existingCart);
+                await dataContext.SaveChangesAsync();
+
+                return await dataContext.CartItems
+                    .Include(p => p.Product)
+                    .Include(u => u.User)
+                    .FirstAsync(c => c.CartItemId == productAlreadyInCart.CartItemId
+                    && c.CartItemId == existingCart.CartItemId);
             }
             else
             {
-                newCartItem = new CartItem
-                {
-                    UserId = userId,
-                    ProductId = request.ProductId,
-                    Quantity = request.Quantity
-                };
-                await dataContext.CartItems.AddAsync(newCartItem);
+                // If the new product isn't in the cart, then we just swap the ids and quantity
+                existingCart.ProductId = newProductId;
+                existingCart.Quantity = newQuantity;
+                await dataContext.SaveChangesAsync();
+
+                return await dataContext.CartItems
+                    .Include(p => p.Product)
+                    .Include(u => u.User)
+                    .FirstAsync(c => c.CartItemId == existingCart.CartItemId);
             }
-            await dataContext.SaveChangesAsync();
-            return await dataContext.CartItems
-                .Include(p => p.ProductId)
-                .Include(u => u.User)
-                .FirstAsync(c => c.CartItemId == newCartItem.CartItemId);
         }
 
         // DELETE ===================================
@@ -124,8 +126,15 @@ namespace DigitalShop.Infrastructure.Repo
         }
 
         // ONE -----------------------------------
-        public async Task<CartItem> DeleteCartByIdAsync(CartItem cart)
+        public async Task<CartItem?> DeleteCartByIdAsync(Guid cartId)
         {
+            var cart = await dataContext.CartItems
+                .Include(p => p.Product)
+                .Include(u => u.User)
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
+
+            if (cart == null) return null;
+
             dataContext.CartItems.Remove(cart);
             await dataContext.SaveChangesAsync();
             return cart;

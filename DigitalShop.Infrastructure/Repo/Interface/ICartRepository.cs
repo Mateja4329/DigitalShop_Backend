@@ -5,10 +5,10 @@ namespace DigitalShop.Infrastructure.Repo.Interface
     public interface ICartRepository
     {
         Task<CartItem> AddCartAsync(CartItem cart);
-        Task<IEnumerable<CartItem>> GetAllCartAsync(Guid userId);
-        Task<CartItem?> GetCartByIdAsycn(Guid userId, Guid productId);
-        Task<CartItem?> UpdateCartAsync(Guid userId, Guid oldProductId, CartCreateDTO request);
+        Task<IEnumerable<CartItem>> GetAllCartsAsync(Guid userId);
+        Task<CartItem?> GetCartByIdAsycn(Guid cartId);
+        Task<CartItem?> UpdateCartAsync(Guid cartId, Guid newProductId, decimal newQuantity);
         Task<List<CartItem>> DeleteAllCartsAsync(Guid userId);
-        Task<CartItem> DeleteCartByIdAsync(CartItem cart);
+        Task<CartItem?> DeleteCartByIdAsync(Guid cartId);
     }
 }
