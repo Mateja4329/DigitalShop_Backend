@@ -12,5 +12,6 @@ namespace DigitalShop.Infrastructure.Entities
         public string Password { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public List<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public string Role = "Customer";
     }
 }

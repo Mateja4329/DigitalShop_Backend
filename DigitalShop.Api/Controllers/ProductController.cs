@@ -22,6 +22,7 @@ namespace DigitalShop.Controllers
         // ==================== POST ====================
         // Here we add a new product to the database and return the list of all products
         // Postman command: POST http://localhost:7255/api/product
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddProduct")]
         public async Task<ActionResult<List<ProductResponseDTO>>> AddProduct(ProductCreateDTO createDTO, [FromServices] IValidator<ProductCreateDTO> validator)
         {
@@ -38,12 +39,13 @@ namespace DigitalShop.Controllers
             var savedProduct = await _productService.AddProductApp(createDTO);
 
             // Map the output (DataBase -> DTO)
-            return CreatedAtAction(nameof(AddProduct), new { id = savedProduct.ProductId }, savedProduct);
+            return CreatedAtAction(nameof(GetProductById), new { id = savedProduct.ProductId }, savedProduct);
         }
 
         // ==================== GET ====================
         // Here we get all products from the database and return them
         // Postman command: GET http://localhost:7255/api/product
+        [AllowAnonymous]
         [HttpGet("GetAllProducts")]
         public async Task<IActionResult> GetAllProducts([FromQuery] ProductQueryParameter queryParams, [FromServices] IValidator<ProductQueryParameter> validator)
         {
@@ -60,6 +62,7 @@ namespace DigitalShop.Controllers
 
         // Here we get a product by id from the database and return it
         // Postman command: GET http://localhost:7255/api/product/1
+        [AllowAnonymous]
         [HttpGet("{id:guid}/GetProductById")]
         public async Task<ActionResult<ProductResponseDTO>> GetProductById(Guid id)
         {
@@ -74,6 +77,7 @@ namespace DigitalShop.Controllers
         // ==================== PUT ====================
         // Here we update a product by id in the database and return the list of all products
         // Postman command: PUT http://localhost:7255/api/product/1
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:guid}/UpdateProduct")]
         public async Task<ActionResult<ProductCreateDTO>> UpdateProduct(Guid id, ProductCreateDTO request)
         {
@@ -89,6 +93,7 @@ namespace DigitalShop.Controllers
         // ==================== DELETE ====================
         // Here we delete all products from the database and return the list of all products
         // Postman command: DELETE http://localhost:7255/api/product
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteAllProducts")]
         public async Task<ActionResult<List<ProductResponseDTO>>> DeleteAllProducts()
         {
@@ -98,6 +103,7 @@ namespace DigitalShop.Controllers
 
         // Here we delete a product by id from the database and return the list of all products
         // Postman command: DELETE http://localhost:7255/api/product/1
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}/DeleteOneProduct")]
         public async Task<ActionResult<ProductResponseDTO>> DeleteProductById(Guid id)
         {

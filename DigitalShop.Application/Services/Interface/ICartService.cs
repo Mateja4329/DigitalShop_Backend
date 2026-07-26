@@ -9,11 +9,11 @@ namespace DigitalShop.Application.Services.Interface
 {
     public interface ICartService
     {
-        Task<CartResponseDTO> AddCartApp(CartCreateDTO cartCreateDTO);
+        Task<CartResponseDTO> AddCartApp(Guid userId, CartCreateDTO cartCreateDTO);
         Task<IEnumerable<CartResponseDTO>?> GetAllCartsApp(Guid userId);
-        Task<CartResponseDTO?> GetCartByIdApp(Guid cartId);
-        Task<CartResponseDTO?> UpdateCartApp(Guid cartId, CartCreateDTO request);
+        Task<CartResponseDTO?> GetCartByIdApp(Guid cartId, Guid userId);
+        Task<CartResponseDTO?> UpdateCartApp(Guid cartId, Guid userId, CartCreateDTO request);
         Task<List<CartResponseDTO>> DeleteAllCartsApp(Guid userId);
-        Task<CartResponseDTO?> DeleteCartByIdApp(Guid cartId);
+        Task<CartResponseDTO?> DeleteCartByIdApp(Guid cartId, Guid userId);
     }
 }

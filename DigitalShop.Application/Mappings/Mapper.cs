@@ -50,12 +50,12 @@ namespace DigitalShop.Application.Mappings
         }
 
         // ============================== CART ==============================
-        public static CartItem ToCartEntity(this CartCreateDTO cart)
+        public static CartItem ToCartEntity(this CartCreateDTO cart, Guid userId)
         {
             return new CartItem
             {
+                UserId = userId,
                 ProductId = cart.ProductId,
-                UserId = cart.UserId,
                 Quantity = cart.Quantity
             };
         }

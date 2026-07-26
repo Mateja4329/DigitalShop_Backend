@@ -48,22 +48,22 @@ namespace DigitalShop.Infrastructure.Repo
                 .ToListAsync();
         }
         // ONE -----------------------------------
-        public async Task<CartItem?> GetCartByIdAsycn(Guid cartId)
+        public async Task<CartItem?> GetCartByIdAsycn(Guid cartId, Guid userId)
         {
             return await dataContext.CartItems
                 .Include(p => p.Product)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId && c.UserId == userId);
         }
 
         // PUT ===================================
-        public async Task<CartItem?> UpdateCartAsync(Guid cartId, Guid newProductId, decimal newQuantity)
+        public async Task<CartItem?> UpdateCartAsync(Guid cartId, Guid userId, Guid newProductId, decimal newQuantity)
         {
             // First we find the exact cart using CartId. This is an exception
             var existingCart = await dataContext.CartItems
                 .Include(u => u.User)
                 .Include(p => p.Product)
-                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId && c.UserId == userId);
 
             if (existingCart == null) return null;
 
@@ -89,8 +89,7 @@ namespace DigitalShop.Infrastructure.Repo
                 return await dataContext.CartItems
                     .Include(p => p.Product)
                     .Include(u => u.User)
-                    .FirstAsync(c => c.CartItemId == productAlreadyInCart.CartItemId
-                    && c.CartItemId == existingCart.CartItemId);
+                    .FirstAsync(c => c.CartItemId == productAlreadyInCart.CartItemId);
             }
             else
             {
@@ -126,12 +125,12 @@ namespace DigitalShop.Infrastructure.Repo
         }
 
         // ONE -----------------------------------
-        public async Task<CartItem?> DeleteCartByIdAsync(Guid cartId)
+        public async Task<CartItem?> DeleteCartByIdAsync(Guid cartId, Guid userId)
         {
             var cart = await dataContext.CartItems
                 .Include(p => p.Product)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(c => c.CartItemId == cartId);
+                .FirstOrDefaultAsync(c => c.CartItemId == cartId && c.UserId == userId);
 
             if (cart == null) return null;
 

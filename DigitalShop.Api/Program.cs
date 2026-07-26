@@ -1,4 +1,6 @@
 using DigitalShop.Application.Helpers;
+using DigitalShop.Application.Services;
+using DigitalShop.Application.Services.Interface;
 using DigitalShop.Infrastructure.Repo;
 using DigitalShop.Infrastructure.Repo.Interface;
 using FluentValidation;
@@ -76,9 +78,15 @@ namespace DigitalShop.Api
             });
 
             builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+
             builder.Services.AddScoped<AuthHelpers>();
 
             // Registers Entity Framework Core and configures DataContext to use SQLite.

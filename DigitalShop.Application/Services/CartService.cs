@@ -20,9 +20,10 @@ namespace DigitalShop.Application.Services
         }
 
         // POST ----------------------------------------------------------------
-        public async Task<CartResponseDTO> AddCartApp(CartCreateDTO cartCreateDTO)
+        public async Task<CartResponseDTO> AddCartApp(Guid userId, CartCreateDTO cartCreateDTO)
         {
-            var newCart = cartCreateDTO.ToCartEntity();
+            var newCart = cartCreateDTO.ToCartEntity(userId);
+
             var savedCartEntity = await _repository.AddCartAsync(newCart);
             return savedCartEntity.ToCartResponseDto();
         }
@@ -33,15 +34,15 @@ namespace DigitalShop.Application.Services
             if (carts == null || !carts.Any()) return null;
             return carts.ToList().ToCartResponseDtoList();
         }
-        public async Task<CartResponseDTO?> GetCartByIdApp(Guid cartId)
+        public async Task<CartResponseDTO?> GetCartByIdApp(Guid cartId, Guid userId)
         {
-            var cart = await _repository.GetCartByIdAsycn(cartId);
+            var cart = await _repository.GetCartByIdAsycn(cartId, userId);
             return cart?.ToCartResponseDto();
         }
         // PUT ---------------------------------------------------------------------
-        public async Task<CartResponseDTO?> UpdateCartApp(Guid cartId, CartCreateDTO request)
+        public async Task<CartResponseDTO?> UpdateCartApp(Guid cartId, Guid userId, CartCreateDTO request)
         {
-            var cart = await _repository.UpdateCartAsync(cartId, request.ProductId, request.Quantity);
+            var cart = await _repository.UpdateCartAsync(cartId, userId, request.ProductId, request.Quantity);
             return cart?.ToCartResponseDto();
         }
         // DELETE -------------------------------------------------------------------
@@ -49,9 +50,10 @@ namespace DigitalShop.Application.Services
         {
             return (await _repository.DeleteAllCartsAsync(userId)).ToCartResponseDtoList();
         }
-        public async Task<CartResponseDTO?> DeleteCartByIdApp(Guid cartId)
+
+        public async Task<CartResponseDTO?> DeleteCartByIdApp(Guid cartId, Guid userId)
         {
-            return (await _repository.DeleteCartByIdAsync(cartId))?.ToCartResponseDto();
+            return (await _repository.DeleteCartByIdAsync(cartId, userId))?.ToCartResponseDto();
             // this is a Null-Conditional Operator (?.)
         }
     }
