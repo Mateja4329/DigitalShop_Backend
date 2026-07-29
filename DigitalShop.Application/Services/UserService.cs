@@ -19,7 +19,7 @@ namespace DigitalShop.Application.Services
             _helpService = helpService;
         }
 
-        // POST -----------------------------------------------------------
+        // POST ==========================================================
         // REGISTER -------------------------------------------------------
         public async Task<UserResponseDTO?> RegisterUserApp(UserCreateDTO userCreateDTO)
         {
@@ -44,7 +44,8 @@ namespace DigitalShop.Application.Services
             var token = _helpService.GenerateJWTToken(user);
             return token;
         }
-        // GET ------------------------------------------------------------
+        // GET ==========================================================
+        // ALL ----------------------------------------------------------
         public async Task<PaginatedList<UserResponseDTO>> GetAllUsersApp(UserQueryParameters query)
         {
             var filterOptions = new UserFilterOptions
@@ -66,6 +67,24 @@ namespace DigitalShop.Application.Services
             );
 
             return paginatedDto;
+        }
+        // ONE ----------------------------------------------------------
+        public async Task<UserResponseDTO?> GetUserApp(Guid userId)
+        {
+            var getUser = await _repository.GetUserAsync(userId);
+            return getUser?.ToUserResponseDto();
+        }
+        // PUT ==========================================================
+        public async Task<UserResponseDTO?> UpdateProfileApp(Guid userId, UserUpdateDTO request)
+        {
+            var updateProfile = await _repository.UpdateProfileAsync(userId, request.FirstName, request.LastName, request.PhoneNumber);
+            return updateProfile?.ToUserResponseDto();
+        }
+        // DELETE =======================================================
+        public async Task<UserResponseDTO?> DeleteUserApp(Guid userId)
+        {
+            var deleteAccount = await _repository.DeleteUserAsync(userId);
+            return deleteAccount?.ToUserResponseDto();
         }
     }
 }

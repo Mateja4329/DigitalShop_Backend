@@ -1,7 +1,7 @@
 ﻿using DigitalShop.Application.DTOs.Product;
 using FluentValidation;
 
-namespace DigitalShop.Application.Validators
+namespace DigitalShop.Application.Validators.ProductValidator
 {
     public sealed class ProductQueryValidator : AbstractValidator<ProductQueryParameter>
     {

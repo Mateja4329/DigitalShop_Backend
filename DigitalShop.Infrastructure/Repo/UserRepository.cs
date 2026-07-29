@@ -31,6 +31,7 @@ namespace DigitalShop.Infrastructure.Repo
         }
 
         // GET ================================================
+        // ALL ------------------------------------------------
         public async Task<(List<User> User, int TotalCount)> GetAllUsersAsync(UserFilterOptions queryParams)
         {
             // First we need to initialize the query as IQueryable (no db exe yet)
@@ -58,6 +59,52 @@ namespace DigitalShop.Infrastructure.Repo
             var count = await query.CountAsync(); // Just count how many total users you have, don't extract data
 
             return (users, count);
+        }
+        // ONE ------------------------------------------------
+        public async Task<User?> GetUserAsync(Guid userId)
+        {
+            return await dataContext.Users.FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+        // PUT ================================================
+        public async Task<User?> UpdateProfileAsync(Guid userId, string? newFirstName, string? newLastName, string? newPhoneNumber)
+        {
+            var updateProfile = await GetUserAsync(userId);
+
+            if (updateProfile is null)
+            {
+                return null;
+            }
+
+            // Assign only if not null, otherwise keep existing value
+            if (newFirstName is not null)
+            {
+                updateProfile.FirstName = newFirstName;
+            }
+            if (newLastName is not null)
+            {
+                updateProfile.LastName = newLastName;
+            }
+            if (newPhoneNumber is not null)
+            {
+                updateProfile.PhoneNumber = newPhoneNumber;
+            }
+
+            await dataContext.SaveChangesAsync();
+            return updateProfile;
+        }
+        // DELETE ================================================
+        public async Task<User?> DeleteUserAsync(Guid userId)
+        {
+            var user = await dataContext.Users
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user == null) return null;
+
+            dataContext.Remove(user);
+            await dataContext.SaveChangesAsync();
+
+            return user;
         }
     }
 }

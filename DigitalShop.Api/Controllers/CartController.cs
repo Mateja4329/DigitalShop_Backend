@@ -52,7 +52,7 @@ namespace DigitalShop.Controllers
         public async Task<ActionResult<IEnumerable<CartResponseDTO>>> GetAllCarts(Guid userId)
         {
             var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(tokenUserId) || tokenUserId != userId.ToString())
+            if (string.IsNullOrEmpty(tokenUserId) || !Guid.TryParse(tokenUserId, out var tokenGuid) || tokenGuid != userId)
             {
                 return Forbid("You cannot view another user's cart.");
             }
@@ -84,7 +84,7 @@ namespace DigitalShop.Controllers
 
         // ==================== PUT ====================
         [HttpPut("{CartId:guid}/UpdateCart")]
-        public async Task<ActionResult<CartCreateDTO>> UpdateCart(Guid cartId, CartCreateDTO request, [FromServices] IValidator<CartCreateDTO> validator)
+        public async Task<ActionResult<CartResponseDTO>> UpdateCart(Guid cartId, CartCreateDTO request, [FromServices] IValidator<CartCreateDTO> validator)
         {
             var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if(string.IsNullOrEmpty(tokenUserId) || !Guid.TryParse(tokenUserId, out var userId))
@@ -113,7 +113,7 @@ namespace DigitalShop.Controllers
         public async Task<ActionResult<List<CartResponseDTO>>> DeleteAllCarts(Guid userId)
         {
             var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if(string.IsNullOrEmpty(tokenUserId) || tokenUserId != userId.ToString())
+            if (string.IsNullOrEmpty(tokenUserId) || !Guid.TryParse(tokenUserId, out var tokenGuid) || tokenGuid != userId)
             {
                 return Forbid("You cannot delete another user's cart.");
             }

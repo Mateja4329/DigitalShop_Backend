@@ -1,7 +1,7 @@
 ﻿using DigitalShop.Application.DTOs.User;
 using FluentValidation;
 
-namespace DigitalShop.Application.Validators
+namespace DigitalShop.Application.Validators.UserValidators
 {
     public class UserQueryValidator : AbstractValidator<UserQueryParameters>
     {

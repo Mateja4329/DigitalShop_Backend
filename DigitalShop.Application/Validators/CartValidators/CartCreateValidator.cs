@@ -1,7 +1,7 @@
 ﻿using DigitalShop.Application.DTOs.CartDTO;
 using FluentValidation;
 
-namespace DigitalShop.Application.Validators
+namespace DigitalShop.Application.Validators.CartValidators
 {
     public sealed class CartCreateValidator : AbstractValidator<CartCreateDTO>
     {

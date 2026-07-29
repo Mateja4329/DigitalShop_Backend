@@ -8,5 +8,8 @@ namespace DigitalShop.Application.Services.Interface
         Task<UserResponseDTO?> RegisterUserApp(UserCreateDTO userCreateDTO);
         Task<String?> LogInUserApp(UserLoginDTO userLoginDTO);
         Task<PaginatedList<UserResponseDTO>> GetAllUsersApp(UserQueryParameters query);
+        Task<UserResponseDTO?> GetUserApp(Guid userId);
+        Task<UserResponseDTO?> UpdateProfileApp(Guid userId, UserUpdateDTO request);
+        Task<UserResponseDTO?> DeleteUserApp(Guid userId);
     }
 }
