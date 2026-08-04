@@ -1,6 +1,6 @@
 # 🛒 DigitalShop API - E-commerce Backend
 
-This repository contains a backend RESTful API for an e-commerce platform, developed during a software internship at **TIAC**. The project was built using **ASP.NET Core** framework (C#) and **SQLite** database, with the aim of demonstrating modern principles of creating scalable and secure web applications.
+This repository contains a backend RESTful API for an e-commerce platform, developed during a software internship at **TIAC** in Novi Sad. The project was built using **ASP.NET Core** framework (C#) and **SQLite** database, with the aim of demonstrating modern principles of creating scalable and secure web applications.
 
 The system enables complete management of users, products and shopping carts, with strict access control and advanced reporting based on business logic.
 
