@@ -11,6 +11,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalShop.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalShop.Tests", "DigitalShop.Tests\DigitalShop.Tests.csproj", "{C5B4CE0E-4813-4CA7-A09F-C55DE4F8BE85}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\CartAPI.png = docs\CartAPI.png
+		docs\LoggedIn.png = docs\LoggedIn.png
+		docs\LoggedOut.png = docs\LoggedOut.png
+		docs\Product&ReportAPI.png = docs\Product&ReportAPI.png
+		docs\ReportAPI.png = docs\ReportAPI.png
+		docs\sqlite_cart.png = docs\sqlite_cart.png
+		docs\sqlite_product.png = docs\sqlite_product.png
+		docs\sqlite_user.png = docs\sqlite_user.png
+		docs\TokenAuth.png = docs\TokenAuth.png
+		docs\TokenAuthSuccess.png = docs\TokenAuthSuccess.png
+		docs\UserAPI.png = docs\UserAPI.png
+		docs\UserLogin.png = docs\UserLogin.png
+		docs\UserLogin200_Token.png = docs\UserLogin200_Token.png
+		docs\UserRegister.png = docs\UserRegister.png
+		docs\UserRegister201.png = docs\UserRegister201.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
