@@ -1,8 +1,17 @@
+using DigitalShop.Application.DTOs.CartDTO;
+using DigitalShop.Application.DTOs.Product;
+using DigitalShop.Application.DTOs.ProductDTO;
+using DigitalShop.Application.DTOs.User;
 using DigitalShop.Application.Helpers;
 using DigitalShop.Application.Services;
 using DigitalShop.Application.Services.Interface;
+using DigitalShop.Application.Services.Interface.Report;
+using DigitalShop.Application.Validators.CartValidators;
+using DigitalShop.Application.Validators.ProductValidator;
+using DigitalShop.Application.Validators.UserValidators;
 using DigitalShop.Infrastructure.Repo;
 using DigitalShop.Infrastructure.Repo.Interface;
+using DigitalShop.Infrastructure.Repo.Interface.Report;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +95,16 @@ namespace DigitalShop.Api
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+            builder.Services.AddScoped<IValidator<ProductQueryParameter>, ProductQueryValidator>();
+            builder.Services.AddScoped<IValidator<ProductCreateDTO>, ProductCreateValidator>();
+            builder.Services.AddScoped<IValidator<UserCreateDTO>, UserRegistratorValidator>();
+            builder.Services.AddScoped<IValidator<UserLoginDTO>, UserLoginValidator>();
+            builder.Services.AddScoped<IValidator<UserQueryParameters>, UserQueryValidator>();
+            builder.Services.AddScoped<IValidator<CartCreateDTO>, CartCreateValidator>();
+
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IReportService, ReportService>();
 
             builder.Services.AddScoped<AuthHelpers>();
 

@@ -10,9 +10,6 @@ namespace DigitalShop.Application.Validators.CartValidators
             RuleFor(c => c.ProductId)
                 .NotEmpty().WithMessage("Product ID is required");
 
-            RuleFor(c => c.UserId)
-                .NotEmpty().WithMessage("User ID is required");
-
             RuleFor(c => c.Quantity)
                 .GreaterThan(0).WithMessage("Quantity must be at least 1");
         }

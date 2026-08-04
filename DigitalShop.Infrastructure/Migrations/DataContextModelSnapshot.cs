@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DigitalShop.Migrations
+namespace DigitalShop.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
     partial class DataContextModelSnapshot : ModelSnapshot
@@ -15,9 +15,9 @@ namespace DigitalShop.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.15");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.18");
 
-            modelBuilder.Entity("DigitalShop.Entities.CartItem", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.CartItem", b =>
                 {
                     b.Property<Guid>("CartItemId")
                         .ValueGeneratedOnAdd()
@@ -44,7 +44,7 @@ namespace DigitalShop.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("DigitalShop.Entities.Product", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -97,7 +97,7 @@ namespace DigitalShop.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DigitalShop.Entities.User", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
@@ -123,20 +123,24 @@ namespace DigitalShop.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DigitalShop.Entities.CartItem", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.CartItem", b =>
                 {
-                    b.HasOne("DigitalShop.Entities.Product", "Product")
+                    b.HasOne("DigitalShop.Infrastructure.Entities.Product", "Product")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DigitalShop.Entities.User", "User")
+                    b.HasOne("DigitalShop.Infrastructure.Entities.User", "User")
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -147,12 +151,12 @@ namespace DigitalShop.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DigitalShop.Entities.Product", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.Product", b =>
                 {
                     b.Navigation("CartItems");
                 });
 
-            modelBuilder.Entity("DigitalShop.Entities.User", b =>
+            modelBuilder.Entity("DigitalShop.Infrastructure.Entities.User", b =>
                 {
                     b.Navigation("CartItems");
                 });

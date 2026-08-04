@@ -83,7 +83,7 @@ namespace DigitalShop.Controllers
         }
 
         // ==================== PUT ====================
-        [HttpPut("{CartId:guid}/UpdateCart")]
+        [HttpPut("{cartId:guid}/UpdateCart")]
         public async Task<ActionResult<CartResponseDTO>> UpdateCart(Guid cartId, CartCreateDTO request, [FromServices] IValidator<CartCreateDTO> validator)
         {
             var tokenUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
