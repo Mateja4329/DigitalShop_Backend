@@ -20,6 +20,7 @@ The system enables complete management of users, products and shopping carts, wi
 [![Swagger UI](docs/Product&ReportAPI.png)](DigitalShop.Api/Controllers/ProductController.cs)
 [![Swagger UI](docs/UserAPI.png)](DigitalShop.Api/Controllers/UserController.cs)
 
+### 2. Authentication & Authorization Flow (JWT)
 [![Logged Out State](docs/LoggedOut.png)](DigitalShop.Api/Program.cs)
 [![User Registration Request](docs/UserRegister.png)](DigitalShop.Application/Validators/UserValidators/UserRegistratorValidator.cs)
 [![User Registration 201 Created](docs/UserRegister201.png)](DigitalShop.Api/Controllers/UserController.cs)
