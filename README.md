@@ -9,8 +9,9 @@ The system enables complete management of users, products and shopping carts, wi
 * **Architecture (N-Tier):** Logical separation into presentation layer (Controllers), business logic (Services) and data access (Repositories), respecting the principles of clean code and *Dependency Injection*.
 * **Security (JWT & BCrypt):** JSON Web Token (JWT) implementation for role-based authentication and authorization (*Customer* and *Admin*). Passwords are never stored in clear text, but protected by modern hashing algorithms (*BCrypt*).
 * **Database (EF Core & SQLite):** Used *Code-First* approach with Entity Framework Core ORM to efficiently map relations (One-to-Many, Many-to-Many) in a lightweight, fast SQLite database.
+* **Pagination & Filtering:** Server-side pagination and query-based filtering implemented across API endpoints for optimized data delivery and enhanced performance.
 * **Validation (FluentValidation):** Robust validation of input data at the level of DTO (Data Transfer Object) classes, before the data even reaches the business logic.
-* **Advanced LINQ Queries:** Optimized database queries to generate dynamic analytical reports (eg find best selling products by category).
+* **Advanced LINQ Queries:** Optimized database queries to generate dynamic analytical reports (e.g., finding best-selling products by category).
 * **Documentation (Swagger):** Integrated and custom Swagger UI that automatically generates documentation and allows API testing directly from the browser with JWT support.
 
 ## 📸 Application Screenshots
